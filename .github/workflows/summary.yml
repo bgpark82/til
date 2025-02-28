@@ -38,8 +38,8 @@ jobs:
             while IFS= read -r file; do
               if [ -f "$file" ]; then
                 echo "---" >> $GITHUB_ENV
-                # 파일의 첫 줄(제목) 추출하여 그대로 출력
-                head -n 1 "$file" >> $GITHUB_ENV
+                # 파일의 첫 줄(제목) 추출하여 굵게 표시
+                echo "*$(head -n 1 "$file" | sed 's/^#\s*//')*" >> $GITHUB_ENV
                 
                 # 파일 경로에서 ./ 제거하고 이탤릭체로 출력
                 CLEAN_PATH=$(echo "$file" | sed 's|^\./||')
