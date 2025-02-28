@@ -31,7 +31,7 @@ jobs:
             # 멀티라인 환경변수 시작
             echo "SUMMARY<<EOF" >> $GITHUB_ENV
             # 메시지 헤더 추가
-            echo "📚 오늘의 TIL 요약 (${TODAY})" >> $GITHUB_ENV
+            echo "📚 **오늘의 TIL 요약 (${TODAY})**" >> $GITHUB_ENV
             echo "" >> $GITHUB_ENV
             
             # 각 변경된 파일에 대해
