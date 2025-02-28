@@ -68,15 +68,3 @@ jobs:
               \"text\": \"${{ env.SUMMARY }}\"
             }" \
             $SLACK_WEBHOOK_URL
-        run: |
-          # curl을 사용하여 Slack webhook으로 메시지 전송
-          curl -X POST -H 'Content-type: application/json' \
-            --data "{
-              \"text\": \"${{ env.SUMMARY }}\"
-            }" \
-            $SLACK_WEBHOOK_URL
-
-
-
-
-
