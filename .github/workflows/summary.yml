@@ -43,6 +43,13 @@ jobs:
                 # 파일의 첫 줄(제목) 추출하여 '#' 제거 후 출력
                 head -n 1 "$file" | sed 's/^#\s*//' >> $GITHUB_ENV
                 echo "" >> $GITHUB_ENV
+                
+                # 파일 내용 전체를 가져와서 첫 줄(제목)을 제외하고 출력
+                echo "내용:" >> $GITHUB_ENV
+                tail -n +2 "$file" >> $GITHUB_ENV
+                echo "" >> $GITHUB_ENV
+                echo "---" >> $GITHUB_ENV
+                echo "" >> $GITHUB_ENV
               fi
             done <<< "$CHANGES"
             # 멀티라인 환경변수 종료
@@ -63,8 +70,3 @@ jobs:
               \"text\": \"${{ env.SUMMARY }}\"
             }" \
             $SLACK_WEBHOOK_URL
-
-
-
-
-
