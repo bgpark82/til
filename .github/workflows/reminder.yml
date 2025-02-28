@@ -16,6 +16,6 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' \
             --data '{
-              "text": "⏰ 5초의 법칙: 5, 4, 3, 2, 1, 글쓰기 시작!"
+              "text": ${{ secrets.TIL_WRITING_REMINDER_MESSAGE }}
             }' \
             $SLACK_WEBHOOK_URL
