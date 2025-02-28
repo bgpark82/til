@@ -39,7 +39,7 @@ jobs:
               if [ -f "$file" ]; then
                 echo "---" >> $GITHUB_ENV
                 # 파일의 첫 줄(제목) 추출하여 '#' 제거 후 '*'로 감싸서 출력
-                head -n 1 "$file" | sed 's/^#\s*/✅ \*/' | sed 's/$/\*/' >> $GITHUB_ENV
+                head -n 1 "$file" | sed 's/^#\s*/🎯 \*/' | sed 's/$/\*/' >> $GITHUB_ENV
                 
                 # 파일 경로에서 ./ 제거하고 이탤릭체로 출력
                 CLEAN_PATH=$(echo "$file" | sed 's|^\./||')
