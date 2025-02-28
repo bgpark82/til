@@ -38,15 +38,15 @@ jobs:
             while IFS= read -r file; do
               if [ -f "$file" ]; then
                 echo "---" >> $GITHUB_ENV
-                # 파일의 첫 줄(제목) 추출하여 굵게 표시
-                echo "*$(head -n 1 "$file" | sed 's/^#\s*//')*" >> $GITHUB_ENV
+                # 파일의 첫 줄(제목) 추출하여 '#' 제거 후 '*'로 감싸서 출력
+                head -n 1 "$file" | sed 's/^#\s*/\*/' | sed 's/$/\*/' >> $GITHUB_ENV
                 
                 # 파일 경로에서 ./ 제거하고 이탤릭체로 출력
                 CLEAN_PATH=$(echo "$file" | sed 's|^\./||')
                 echo "_${CLEAN_PATH}_" >> $GITHUB_ENV
                 
                 # 파일 내용 전체를 가져와서 첫 줄(제목)을 제외하고 출력
-                tail -n +2 "$file" >> $GITHUB_ENV
+                echo "> $(tail -n +2 "$file")" | sed 's/^/> /' >> $GITHUB_ENV
                 echo "" >> $GITHUB_ENV
               fi
             done <<< "$CHANGES"
@@ -68,3 +68,15 @@ jobs:
               \"text\": \"${{ env.SUMMARY }}\"
             }" \
             $SLACK_WEBHOOK_URL
+        run: |
+          # curl을 사용하여 Slack webhook으로 메시지 전송
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{
+              \"text\": \"${{ env.SUMMARY }}\"
+            }" \
+            $SLACK_WEBHOOK_URL
+
+
+
+
+
