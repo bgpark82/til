@@ -1,0 +1,21 @@
+name: Send Slack Reminder
+
+on:
+  schedule:
+    - cron: '0 20 * * *'  # 매일 오후 9시 (베를린 시간, UTC+1)
+  workflow_dispatch:  # 수동 실행도 가능
+
+jobs:
+  send-slack-notification:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send reminder message to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{
+              "text": "⏰ 5초의 법칙: 5, 4, 3, 2, 1, 글쓰기 시작!"
+            }' \
+            $SLACK_WEBHOOK_URL
