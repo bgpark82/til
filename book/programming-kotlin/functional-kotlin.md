@@ -3,52 +3,58 @@
 함수형 프로그래밍은 명령형 스타일 프로그래밍과 비교했을 때 덜 복잡하다. 함수형 프로그 래밍은 고차함수를 사용하고, 함수형 구성을 한다. 그래서 유동적인 코드를 쓸 수 있고, 그렇게 하면 더 쉽게 이해할 수 있고 쉽게 유지보수 할 수 있다. 람다는 이름이 없는 함수이다. 그리고 다른 함수의 아규먼트로 쉽게 전달될 수 있는 함수이다. 코틀린은 람다를 작성하는데 다양한 옵션을 제공한다. 람다가 요구되는 곳이라면 함수 레퍼런스를 전달해서 함수나 메소드를 재사용할 수 있다. 람다는 상태가 없지만 클로저가 상태를 옮긴다. 하지만 뮤터블 상태를 많이 사용하면 잠재적인 에러를 내재하게 되고 코드의 행동을 혼란스럽게 하므로 사용을 피하도록 하자. 코틀린은 람다에서 return에 대해 까다로운 규칙을 가지고 있다. 라벨 리턴을 사용할 수 있고, 논로컬 리턴은 특수한 경우에만 사용할 수 있다. 게다가 코틀린은 함수와 람다의 호출 오버헤드를 제거하기 위해서 inline 키워드를 제공한다
 
 ```kotlin
-/**
-    * lambda
-    * - 고차함수(map, filter)에서 아규먼트로 사용되는 짧은 함수
-    * - 이름이 없고, 타입추론으로 리턴 타입 가지는 함수
-    * - 선언형: 파라미터, 바디 (명령형: 이름, 리턴타입, 파라미터, 바디)
-    * - 멀타라인 람다는 지양한다
-    * 고차함수
-    * - 계산 대신 람다에게 계산 가능
-    */
-
-// 1. 고차함수의 파라미터로 람다 전송
-println(isPrimeV1(5))
-println(isPrimeV2(5))
-println(isPrimeV3(5))
-println(isPrimeV4(5))
-
-// 2. 람다를 파라미터로 받는 람다
-walkToV1({ i -> print(i) }, 5)
-walkToV2(5, { i -> print(i) })
-walkToV2(5) { i -> print(i) } // 콤마를 제외하고 람다를 밖으로 뺼 수도 있음
-walkToV2(5) { print(it) } // 암시적 파라미터 사용 가능
-walkToV2(5, ::print) // 패스수르 람다 (데이터를 변형하지 않고 그대로 전달하는 람다)는 함수이름으로 대체 가능, 람다를 참조로 대체 가능 (::)
-
-// 3. 함수를 리턴하는 함수
-val names = listOf("Pam", "Pat", "Paul", "Paula")
-println(names.find { name -> name.length == 5}) // Paula
-println(names.find { name -> name.length == 4}) // Paul
-// 코드가 중복으로 작성됨, Write Every Time (WET, 매번 작성하는 안티패턴)
-println(names.find(predicateOfLengthV1(5))) // Paula
-println(names.find(predicateOfLengthV1(4))) // Paul
-println(names.find(predicateOfLengthV2(5))) // Paula
-println(names.find(predicateOfLengthV2(4))) // Paul
-println(names.find(predicateOfLengthV3(5))) // Paula
-println(names.find(predicateOfLengthV3(4))) // Paul
-
-// 4. 익명함수
-println(names.find(checkLengthV1))
-println(names.find(checkLengthV2))
-println(names.find(checkLengthV3))
-println(names.find(checkLengthV4))
-println(names.find(fun(name: String): Boolean { return name.length == 5 })) // 익명함수를 바로 사용
-
-// 6. 라벨리턴
-callerV1()
-callerV2()
-
+	/**
+	 * lambda
+	 * - 고차함수(map, filter)에서 아규먼트로 사용되는 짧은 함수
+	 * - 이름이 없고, 타입추론으로 리턴 타입 가지는 함수
+	 * - 선언형: 파라미터, 바디 (명령형: 이름, 리턴타입, 파라미터, 바디)
+	 * - 멀타라인 람다는 지양한다
+	 * 고차함수
+	 * - 계산 대신 람다에게 계산 가능
+	 */
+    
+    // 1. 고차함수의 파라미터로 람다 전송
+    println(isPrimeV1(5))
+    println(isPrimeV2(5))
+    println(isPrimeV3(5))
+    println(isPrimeV4(5))
+    
+    // 2. 람다를 파라미터로 받는 람다
+    walkToV1({ i -> print(i) }, 5)
+    walkToV2(5, { i -> print(i) })
+    walkToV2(5) { i -> print(i) } // 콤마를 제외하고 람다를 밖으로 뺼 수도 있음
+    walkToV2(5) { print(it) } // 암시적 파라미터 사용 가능
+    walkToV2(5, ::print) // 패스수르 람다 (데이터를 변형하지 않고 그대로 전달하는 람다)는 함수이름으로 대체 가능, 람다를 참조로 대체 가능 (::)
+    
+    // 3. 함수를 리턴하는 함수
+    val names = listOf("Pam", "Pat", "Paul", "Paula")
+    println(names.find { name -> name.length == 5}) // Paula
+    println(names.find { name -> name.length == 4}) // Paul
+    // 코드가 중복으로 작성됨, Write Every Time (WET, 매번 작성하는 안티패턴)
+    println(names.find(predicateOfLengthV1(5))) // Paula
+    println(names.find(predicateOfLengthV1(4))) // Paul
+    println(names.find(predicateOfLengthV2(5))) // Paula
+    println(names.find(predicateOfLengthV2(4))) // Paul
+    println(names.find(predicateOfLengthV3(5))) // Paula
+    println(names.find(predicateOfLengthV3(4))) // Paul
+    
+    // 4. 익명함수
+    println(names.find(checkLengthV1))
+    println(names.find(checkLengthV2))
+    println(names.find(checkLengthV3))
+    println(names.find(checkLengthV4))
+    println(names.find(fun(name: String): Boolean { return name.length == 5 })) // 익명함수를 바로 사용
+    
+    // 6-1. 라벨리턴
+	callerV1()
+    callerV2()
+    // 6-2. 논로컬 리턴
+    callerV3()
+    
+    // 7. 인라인 함수
+    callInvokeTwoV1()
+    callInvokeTwoV2() // inline 함수
+    callInvokeTwoV3() // noninline 함수
 
 // 1. 고차함수의 파라미터로 람다 전송
 fun isPrimeV1(n: Int) = n > 1 && (2 until n).none({i: Int -> n % i == 0})
@@ -120,6 +126,81 @@ fun invokeWith(n: Int, action: (Int) -> Unit) {
     println("enter invokeWith $n")
     action(n)
     println("exit invokeWith $n")
+}
+// 6-2. 논로컬 리턴
+fun callerV3() {
+    (1..3).forEach { i ->  // 리턴 허용 (인라인 함수!!: 함수 호출없이 코드가 직접 삽입, 컴파일 단계에서 caller 함수의 한부분이 되어 caller를 나올 수 있음)
+        println("int forEach for $i")
+        if (i == 2) { return } // 함수를 빠져나가는 리턴 == return
+    	invokeWith(i) { // 리턴 허용 안함 (람다, caller 외 다른 stack을 사용하기 때문에 return을 하고 caller가 아니라 해당 스택을 빠져나감? 무튼 허용 안함)
+            println("enter for $it")
+            if (it == 2) return@invokeWith
+            println("exit for $it")
+        }
+        println("end of caller")
+    }
+}
+
+// 7. inline 함수
+// 함수를 호출하는 대신 바이트코드로 대체
+// 긴 함수는 바이트코드가 커진다
+// 람다의 함수 호출 오버헤드 제거 -> 퍼포먼스 향상, 논로컬 흐름제어 (함수에서 바로 빠져나가기)
+// 반복문에서 람다를 호출할 때 빼고는 사실상 크게 필요없다
+fun callInvokeTwoV1() {
+    invokeTwoV1(1, {i -> report(i)}, {i -> report(i)})
+}
+fun invokeTwoV1(
+	n: Int,
+    action1: (Int) -> Unit,
+    action2: (Int) -> Unit
+): (Int) -> Unit {
+    println("enter invokeTwo $n")
+    action1(n)
+    action2(n)
+    println("exit invokeTwo $n")
+    return { _: Int -> println("lambda returned from invokeTwo")}
+}
+
+fun callInvokeTwoV2() {
+    invokeTwoV2(1, {i -> report(i)}, {i -> report(i)})
+}
+// inline 함수, stack depth 감소, 함수 호출 (stack)을 제거하고 컴파일해서 직접 삽입하기 때문
+// 런타임에 stack 개수는 감소하지만 컴파일 바이트 수가 늘어남
+inline fun invokeTwoV2(
+	n: Int,
+    action1: (Int) -> Unit,
+    action2: (Int) -> Unit
+): (Int) -> Unit {
+    println("enter invokeTwo2 $n")
+    action1(n)
+    action2(n)
+    println("exit invokeTwo2 $n")
+    return { _: Int -> println("lambda returned from invokeTwo")}
+}
+
+fun callInvokeTwoV3() {
+    invokeTwoV3(1, {i -> report(i)}, {i -> report(i)})
+}
+// non inline
+inline fun invokeTwoV3(
+	n: Int,
+    action1: (Int) -> Unit,
+    noinline action2: (Int) -> Unit // 
+): (Int) -> Unit {
+    println("enter invokeTwo3 $n")
+    action1(n)
+    action2(n)
+    println("exit invokeTwo3 $n")
+    return { _: Int -> println("lambda returned from invokeTwo")}
+}
+
+fun report(n: Int) {
+    println("")
+    print("call with $n, ")
+    val stackTrace = RuntimeException().getStackTrace()
+    println("Stack depth: ${stackTrace.size}")
+    println("Partial listing of the stack:")
+    stackTrace.take(3).forEach(::println)
 }
 
 ```
