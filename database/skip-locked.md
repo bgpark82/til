@@ -40,8 +40,6 @@ SELECT * FROM task_queue WHERE id = 3 FOR UPDATE SKIP LOCKED;
 - 이유: id=3이 이미 트랜잭션 A에 의해 락이 걸려 있으므로, SKIP LOCKED는 이를 건너뛰고 처리 가능한 행을 찾음 → 하지만 조건을 만족하는 다른 행이 없으므로 빈 결과 반환
 
 
-
-
 ## 역사
 1. 데드락 해결
   - 전통적인 `FOR UPDATE` 또는 `FOR SHARED` 락 방식은 특정 행에 락을 검
