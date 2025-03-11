@@ -39,7 +39,6 @@ SELECT * FROM task_queue WHERE id = 3 FOR UPDATE SKIP LOCKED;
 - 결과: 아무것도 반환되지 않음 (0 rows)
 - 이유: id=3이 이미 트랜잭션 A에 의해 락이 걸려 있으므로, SKIP LOCKED는 이를 건너뛰고 처리 가능한 행을 찾음 → 하지만 조건을 만족하는 다른 행이 없으므로 빈 결과 반환
 
-
 ## 역사
 1. 데드락 해결
   - 전통적인 `FOR UPDATE` 또는 `FOR SHARED` 락 방식은 특정 행에 락을 검
@@ -65,7 +64,6 @@ SELECT * FROM task_queue WHERE id = 3 FOR UPDATE SKIP LOCKED;
 > - NO_WAIT: 락이 걸린 행을 조회하면, 즉시 예외발생, 대기하지 않음, 예외를 처리해야 함
 > - SKIP_LOCKED: 락이 걸린 행을 조회하면, 다른 행을 조회, 일부 데이터 무시 
 
-
 ## 주의사항
 1. 공정성(Fairness)/일관성 보장 안됨
   - 순차처리를 보장못하므로 일부 데이터는 영원히 선택안될 수 있습니다. (예약 시스템에서는 비권장)
@@ -74,7 +72,6 @@ SELECT * FROM task_queue WHERE id = 3 FOR UPDATE SKIP LOCKED;
   - 이미 락이 걸린 행은 건너 뛰고, 지속적으로 건너 뛰어 질 수 있습니다.
 3. 순차적 처리가 필요한 경우 부적합
   - 예를 들어, FIFO(선입선출) 방식으로 데이터를 처리해야 하는 경우 `SKIP_LOCKED`를 사용하면 순서가 꼬일 수 있음.
-
 
 ## PESSIMISTIC
 1. PESSIMISTIC_WRITE
