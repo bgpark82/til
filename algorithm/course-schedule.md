@@ -76,7 +76,7 @@ https://leetcode.com/problems/course-schedule/description/
     private boolean dfs(int crs) {
         // 이미 존재한다면 사이클 발생한 상태
         if (vistied.contains(curr)) return false; 
-        
+
         // curr이 empty면 더이상 방문할 노드가 없는 상태 (사이클이 아닌 상태)
         if (map.get(curr).isEmpty()) return true; 
 
@@ -104,4 +104,61 @@ https://leetcode.com/problems/course-schedule/description/
 > - 각 하나의 노드를 방문하고, 모든 간선을 방문하는 경우 = O(1 * E)
 > - 모든 노드를 방문하고, 각 하나의 간선을 방문하는 경우 = O(V * 1)        
     
+# SOLUTION 02: Topological Sort
+- Time Complexity: O(V + E) (V: vertices, E: edges)
+- Space Complexity: O(V + E) (V: vertices, E: edges)
+```java
+public boolean canFinish(int numCourses, int[][] prerequisites) {
+        // 전입차수 계산
+        int[] indegree = new int[numCourses];
+        
+        // 관계 설정
+        List<List<Integer>> adj = new ArrayList();
+        for (int i = 0; i < numCourses; i++) {
+            adj.add(new ArrayList());
+        }
+        for (int[] pre : prerequisites) {
+            // pre[0]가 들어야 하는 선수과목 개수
+            indegree[pre[1]]++;
+            adj.get(pre[0]).add(pre[1]);
+        }
 
+        // 전입차수가 0인 큐 넣기
+        Queue<Integer> q = new LinkedList();
+        for (int i = 0; i < numCourses; i++) {
+            if (indegree[i] == 0) {
+                q.add(i);
+            }
+        }
+
+        // 큐를 돌면서 확인
+        int finish = 0;
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            // 방문회수인가?
+            finish++;
+
+            // 선수과목들 확인
+            for (int nei : adj.get(node)) {
+                indegree[nei]--;
+                if (indegree[nei] == 0) {
+                    q.add(nei);
+                }
+            }
+        }
+
+        // 방문한 횟수가 모두 같으면 사이클이 없음
+        return finish == numCourses;
+    }
+```
+Topological Sort는 그래프의 순서를 정렬하는 방법이다
+- 선후 관계가 있는 그래프를 나열하는 방법
+    - 예를들어, 강의 수강, 작업 순서 등
+- 동작 방식
+    1. 각 노드에 들어오는 간선의 개수를 센다
+    2. 전입차수가 0인 노드를 찾는다
+    3. 전입차수가 0인 노드를 큐에 넣고 처리한다
+    4. 해당 노드가 연결된 노드의 전입차수를 1 감소시킨다
+    5. 전입차수가 0인 노드를 큐에 넣고 처리한다
+    6. 큐가 비어있으면 사이클 발생
+    
