@@ -11,6 +11,26 @@ https://leetcode.com/problems/course-schedule/description/
         7 courses : 0 ~ 6
         true if finish all courses
 
+        그래프의 핵심은 관계이다
+        주로 만드는 방법은 map 혹은 nxn 배열로 관계를 만든다
+        예를들어, 1번 강의를 수강하기 위해서 2, 3번을 수강해야 한다면 관계는 다음과 같다
+        1: [2, 3]
+        - map
+        - NxN 배열
+
+        또한 그래프는 방문 여부가 중요하다
+        만약 방문을 했다면, 해당 노드는 재방문할 수 없다
+        보통 map을 만들어서 방문 여부를 모두 기록하거나
+        set을 만들어서 노드 방문여부를 체크한다
+        - map
+        - NxN 배열
+        - set
+
+        그래프의 방문 또한 중요하다
+        보통 dfs 혹은 bfs를 사용한다
+        만약 최단 경로를 방문하고 싶다면 bfs
+        그렇지 않다면 일반적으로 dfs를 사용한다
+
         [[2,1],[3,2],[4,3]]
         1 -> 2 
                 -> 3 -> 4
@@ -52,20 +72,24 @@ https://leetcode.com/problems/course-schedule/description/
         1 3 // 사이클이 발생하는 즉시 false 반환
         1 3 2
     */
+    // 특정 노드로 부터 시작된 그래프에 cycle이 있는지 확인
     private boolean dfs(int crs) {
-        // 이미 방문했다면 cycle 상태
-        if (visited.contains(crs)) return false;
-
-        // 현재 노드는 갈 곳이 없음, 혹은 방문 완료
-        if (map.get(crs).isEmpty()) return true;
+        // 이미 존재한다면 사이클 발생한 상태
+        if (vistied.contains(curr)) return false; 
+        
+        // curr이 empty면 더이상 방문할 노드가 없는 상태 (사이클이 아닌 상태)
+        if (map.get(curr).isEmpty()) return true; 
 
         visited.add(crs);
         // 현재 강의를 수강하기 위한 사전 강의 리스트
         for (int pre: map.get(crs)) {
+            // 다음 노드에 cycle이 있는 경우 바로 false
             if (!dfs(pre)) return false;
         }
         // 방문을 했다면 사전강의를 들은 상태
         visited.remove(crs);
+        // 이미 모두 방문했기 때문에 없애 버린다. 이건 최적화를 위해서이다. 
+        // 자식 노드를 모두 방문했었던 노드라면, 자식을 방문할 필요가 없다
         map.put(crs, new ArrayList());
         // 현재 노드는 별 문제 음슴
         return true;
