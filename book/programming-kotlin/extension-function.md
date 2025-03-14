@@ -51,6 +51,7 @@ println(String.format("%-10s", result2))
 
 // run
 // 아규먼트를 전달하지 않는다. 대신 run을 호출한 객체(컨텍스트 객체)를 람다의 this에 바인딩, 람다의 결과를 리턴, (즉, arg 못쓰는대신 컨텍스트 객체를 지지고 볶고 싶을 때)
+// 주로 this를 변형해서 원하는 결과를 반환할 때 사용 (map 유사)
 val result3 = str.run {
     print(String.format(format, "run", "N/A", this, result))
     result + " " + this
@@ -59,6 +60,7 @@ println(String.format("%-10s", result3))
 
 // apply
 // 아규먼트를 전달하지 않는다. 대신 run을 호출한 객체(컨텍스트 객체)를 람다의 this에 바인딩, 람다의 결과를 무시하고 this를 리턴한다
+// 주로 this로 값을 주입하여 this로 반환할 때 사용 (builder 패턴)
 val result4 = str.apply { 
     print(String.format(format, "apply", "N/A", this, result))
     result
