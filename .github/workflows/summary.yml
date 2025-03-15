@@ -42,15 +42,17 @@ jobs:
           
           # 변경된 파일이 있는 경우
           if [ -n "$CHANGES" ]; then
-            # 멀티라인 환경변수 시작
-            echo "SUMMARY<<EOF" >> $GITHUB_ENV
-            echo "📚 *오늘의 TIL 요약 (${TODAY})*" >> $GITHUB_ENV
-            echo "" >> $GITHUB_ENV
+            # 임시 파일에 요약 내용 저장
+            TEMP_FILE=$(mktemp)
+            
+            # 헤더 추가
+            echo "📚 *오늘의 TIL 요약 (${TODAY})*" > "$TEMP_FILE"
+            echo "" >> "$TEMP_FILE"
             
             # 각 변경된 파일에 대해
             while IFS= read -r file; do
               if [ -f "$file" ]; then
-                echo "---" >> $GITHUB_ENV
+                echo "---" >> "$TEMP_FILE"
                 
                 # 파이썬 스크립트를 사용하여 요약 생성
                 RESULT=$(python .github/scripts/summarize.py "$file")
@@ -60,14 +62,20 @@ jobs:
                 PATH=$(echo "$RESULT" | jq -r '.path')
                 SUMMARY=$(echo "$RESULT" | jq -r '.summary')
                 
-                echo "🎯 *${TITLE}*" >> $GITHUB_ENV
-                echo "_${PATH}_" >> $GITHUB_ENV
-                echo "> ${SUMMARY}" >> $GITHUB_ENV
-                echo "" >> $GITHUB_ENV
+                echo "🎯 *${TITLE}*" >> "$TEMP_FILE"
+                echo "_${PATH}_" >> "$TEMP_FILE"
+                echo "> ${SUMMARY}" >> "$TEMP_FILE"
+                echo "" >> "$TEMP_FILE"
               fi
             done <<< "$CHANGES"
-            # 멀티라인 환경변수 종료
+            
+            # 임시 파일의 내용을 GITHUB_ENV에 설정
+            echo "SUMMARY<<EOF" >> $GITHUB_ENV
+            cat "$TEMP_FILE" >> $GITHUB_ENV
             echo "EOF" >> $GITHUB_ENV
+            
+            # 임시 파일 삭제
+            rm "$TEMP_FILE"
           else
             # 변경된 파일이 없는 경우
             echo "SUMMARY=어제는 새로운 TIL이 없었습니다. 😅" >> $GITHUB_ENV
