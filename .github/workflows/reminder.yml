@@ -13,6 +13,8 @@ jobs:
       - name: Send reminder message to Slack
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          MESSAGE: ${{ secrets.TIL_WRITING_REMINDER_MESSAGE }}
         run: |
           echo "SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL"
-          curl -X POST -H 'Content-type: application/json' --data '{"text": "${{ secrets.TIL_WRITING_REMINDER_MESSAGE }}"}' $SLACK_WEBHOOK_URL
+          echo "Sending message: $MESSAGE"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${MESSAGE}\"}" $SLACK_WEBHOOK_URL
