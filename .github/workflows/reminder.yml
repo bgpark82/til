@@ -14,8 +14,9 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
+          echo "SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL"
           curl -X POST -H 'Content-type: application/json' \
             --data '{
               "text": ${{ secrets.TIL_WRITING_REMINDER_MESSAGE }}
             }' \
-            ${{ env.SLACK_WEBHOOK_URL }}
+            $SLACK_WEBHOOK_URL
