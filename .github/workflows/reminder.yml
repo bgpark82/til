@@ -17,4 +17,4 @@ jobs:
         run: |
           echo "SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL"
           echo "Sending message: $MESSAGE"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${MESSAGE}\"}" $SLACK_WEBHOOK_URL
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"hello\"}" $SLACK_WEBHOOK_URL
