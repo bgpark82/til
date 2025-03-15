@@ -17,8 +17,7 @@ jobs:
         with:
           fetch-depth: 0  # 전체 히스토리를 가져옴
 
-      # 전날 변경된 파일 확인 및 요약 생성
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
@@ -28,65 +27,51 @@ jobs:
           python -m pip install --upgrade pip
           pip install openai
 
-      - name: Get and summarize yesterday's changes
+      # 전날 변경된 파일 확인 및 요약 생성
+      - name: Get yesterday's changed files and summarize
         id: changed-files
         env:
           TZ: 'Europe/Berlin'
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python << 'EOF'
-          import os
-          import subprocess
-          from datetime import datetime, timedelta
-          import openai
-
-          # OpenAI API 설정
-          openai.api_key = os.getenv('OPENAI_API_KEY')
-
-          def get_file_content(file_path):
-              with open(file_path, 'r', encoding='utf-8') as f:
-                  return f.read()
-
-          # 어제 날짜 구하기
-          today = datetime.now()
-          yesterday = (today - timedelta(days=1)).strftime('%Y-%m-%d')
+          TODAY=$(date +%Y-%m-%d)
+          YESTERDAY=$(date -d "yesterday" +%Y-%m-%d)
           
-          # 어제 변경된 파일 찾기
-          cmd = f"git log --since='{yesterday} 00:00:00' --until='{yesterday} 23:59:59' --name-only --format='' | grep '\\.md$' | grep -v '^\.github/' | sort -u"
-          changes = subprocess.getoutput(cmd).strip().split('\n')
+          # git log를 사용하여 어제 날짜의 모든 변경사항 확인
+          CHANGES=$(git log --since="$YESTERDAY 00:00:00" --until="$YESTERDAY 23:59:59" --name-only --format="" | grep '\.md$' | grep -v '^\.github/' | sort -u)
           
-          if changes and changes[0]:
-              summary = f"📚 *오늘의 TIL 요약 ({today.strftime('%Y-%m-%d')})*\n\n"
-              
-              for file in changes:
-                  if os.path.exists(file):
-                      content = get_file_content(file)
-                      
-                      # ChatGPT API를 사용하여 내용 요약
-                      response = openai.ChatCompletion.create(
-                          model="gpt-3.5-turbo",
-                          messages=[
-                              {"role": "system", "content": "마크다운 문서의 내용을 2-3문장으로 간단히 요약해주세요."},
-                              {"role": "user", "content": content}
-                          ]
-                      )
-                      
-                      ai_summary = response.choices[0].message.content
-                      
-                      # 파일의 첫 줄(제목)
-                      title = content.split('\n')[0].replace('#', '').strip()
-                      
-                      summary += f"---\n"
-                      summary += f"🎯 *{title}*\n"
-                      summary += f"_{file}_\n"
-                      summary += f"> {ai_summary}\n\n"
-          else:
-              summary = "오늘은 새로운 TIL이 없습니다. 😅"
-
-          # GitHub Actions 환경 변수로 저장
-          with open(os.environ['GITHUB_ENV'], 'a') as f:
-              f.write(f"SUMMARY<<EOF\n{summary}\nEOF\n")
-          EOF
+          # 변경된 파일이 있는 경우
+          if [ -n "$CHANGES" ]; then
+            # 멀티라인 환경변수 시작
+            echo "SUMMARY<<EOF" >> $GITHUB_ENV
+            echo "📚 *오늘의 TIL 요약 (${TODAY})*" >> $GITHUB_ENV
+            echo "" >> $GITHUB_ENV
+            
+            # 각 변경된 파일에 대해
+            while IFS= read -r file; do
+              if [ -f "$file" ]; then
+                echo "---" >> $GITHUB_ENV
+                
+                # 파이썬 스크립트를 사용하여 요약 생성
+                RESULT=$(python .github/scripts/summarize.py "$file")
+                
+                # JSON 결과에서 필요한 정보 추출
+                TITLE=$(echo "$RESULT" | jq -r '.title')
+                PATH=$(echo "$RESULT" | jq -r '.path')
+                SUMMARY=$(echo "$RESULT" | jq -r '.summary')
+                
+                echo "🎯 *${TITLE}*" >> $GITHUB_ENV
+                echo "_${PATH}_" >> $GITHUB_ENV
+                echo "> ${SUMMARY}" >> $GITHUB_ENV
+                echo "" >> $GITHUB_ENV
+              fi
+            done <<< "$CHANGES"
+            # 멀티라인 환경변수 종료
+            echo "EOF" >> $GITHUB_ENV
+          else
+            # 변경된 파일이 없는 경우
+            echo "SUMMARY=어제는 새로운 TIL이 없었습니다. 😅" >> $GITHUB_ENV
+          fi
 
       # Slack으로 요약 전송
       - name: Send summary to Slack
@@ -95,7 +80,9 @@ jobs:
         run: |
           # curl을 사용하여 Slack webhook으로 메시지 전송
           curl -X POST -H 'Content-type: application/json' \
-            --data "{\"text\": \"${{ env.SUMMARY }}\"}" \
+            --data "{
+              \"text\": \"${{ env.SUMMARY }}\"
+            }" \
             $SLACK_WEBHOOK_URL
 
 
