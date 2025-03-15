@@ -14,17 +14,20 @@ jobs:
       # 리포지토리 코드를 가져오기
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # 전체 히스토리를 가져옴
 
-      # 당일 변경된 파일 확인 및 요약 생성
-      - name: Get today's changed files
+      # 전날 변경된 파일 확인 및 요약 생성
+      - name: Get yesterday's changed files
         id: changed-files
         env:
-          TZ: 'Europe/Berlin'  # 베를린 시간대 직접 설정
+          TZ: 'Europe/Berlin'
         run: |
           TODAY=$(date +%Y-%m-%d)
+          YESTERDAY=$(date -d "yesterday" +%Y-%m-%d)
           
-          # 당일 수정된 md 파일 찾기 (.github 폴더 제외)
-          CHANGES=$(find . -name "*.md" -not -path "./.github/*" -type f -newermt "${TODAY} 00:00" ! -newermt "${TODAY} 23:59" -print)
+          # git log를 사용하여 어제 날짜의 모든 변경사항 확인
+          CHANGES=$(git log --since="$YESTERDAY 00:00:00" --until="$YESTERDAY 23:59:59" --name-only --format="" | grep '\.md$' | grep -v '^\.github/' | sort -u)
           
           # 변경된 파일이 있는 경우
           if [ -n "$CHANGES" ]; then
