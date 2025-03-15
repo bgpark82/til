@@ -16,7 +16,5 @@ jobs:
         run: |
           echo "SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL"
           curl -X POST -H 'Content-type: application/json' \
-            --data '{
-              "text": ${{ secrets.TIL_WRITING_REMINDER_MESSAGE }}
-            }' \
+            --data "{\"text\": \"${{ secrets.TIL_WRITING_REMINDER_MESSAGE }}\"}" \
             $SLACK_WEBHOOK_URL
