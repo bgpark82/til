@@ -18,4 +18,4 @@ jobs:
             --data '{
               "text": ${{ secrets.TIL_WRITING_REMINDER_MESSAGE }}
             }' \
-            $SLACK_WEBHOOK_URL
+            ${{ env.SLACK_WEBHOOK_URL }}
