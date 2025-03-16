@@ -141,6 +141,44 @@ createMailer()
     .also(::sendMail)
 
 
+// 5. 리시버: 람다나 함수에서 암시적으로 접근할 수 있는 객체
+fun String.printUppercase() {
+    println(this.toUpperCase()) // this가 리시버, String 객체를 말한다
+}
+
+// 암시적 리시버
+var len = 10
+val printlt: (Int) -> Unit = { n: Int -> 
+    // length는 렉시컬 스코프에서 왔음
+    // 컴파일 당시, 리시버의 스코프를 확인한다. 만약 리시버가 없으면, 컴파일러는 렉시컬 스코프를 찾는다
+    println("n is $n, length is $len")
+}
+printlt(6)
+
+// 람다는 리시버의 확장 함수처럼 동작한다
+val printltV2: String.(Int) -> Unit = { n: Int -> 
+    println(this)
+    println("n is $n, length is $length, length of string is ${this.length}")
+}
+// this에 바인딩될 리시버를 제공해야 한다 ("Hello" 문자)
+"hello".printltV2(6) // 방법 1
+printltV2("Hello", 6) // 방법 2, 리시버를 먼저 전달 가능, 선호하지는 않는다
+
+
+fun top(func: String.() -> Unit) = "helloV1".func()
+fun nested(func: Int.() -> Unit) = (-2).func()
+
+top {
+    println("In outer lmabda $this and ${length}")
+    nested {
+        println("in inner lambda $this and ${toDouble()}")
+        // inner에서 outer로도 접근 가능
+        println("from inner through receiver of outer: ${length}")
+        println("from inner to outer receiver ${this@top}")
+    }
+}
+
+
 // 1. 연산자 오버로딩
 // 연산자 오버로딩에 해당하는 메소드의 명은 이미 정해져있다 (times, plus)
 // 항상 새로운 객체를 반환해야 한다
