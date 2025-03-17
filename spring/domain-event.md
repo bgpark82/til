@@ -1,4 +1,5 @@
 # Domain Event
+https://dev.to/kirekov/spring-data-power-of-domain-events-2okm
 
 스프링에서는 여러 방식으로 이벤트를 전달 할 수 있다
 
