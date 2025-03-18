@@ -35,3 +35,124 @@ println(2.days(ago))
 println(2 days ago)
 
 ```
+
+## Custom DSL
+```kotlin
+fun main() {
+    
+    "Release meeting" meetingV1 { 
+        println("meetingV1")
+    }
+    
+    "Release meeting" meetingV2 {
+        println("meetingV2: $this")
+    }
+    
+    "Release meeting" meetingV3 {
+        println("meetingV3: $this")
+        at(14.30)
+        by(15.20)
+    }
+
+    "Release meeting" meetingV4 {
+        println("meetingV3: $this")
+        // this at 14.30 // infix는 객체 참조 (this) 반드시 필요
+        // this by 15.20
+        start at 14.30
+        end by 15.20
+    }
+    
+    "Release meeting" meetingV5 {
+        println("meetingV5: $this")
+        start at 14.30
+        end by 15.20
+	}
+}
+
+infix fun String.meetingV1(block: () -> Unit) {
+    println("step 1")
+	block() // 여기서 println("meetingV1")이 실행된다
+}
+
+// Meeting.() -> Unit으로 meeting의 확장함수로 만들어야 한다
+infix fun String.meetingV2(block: MeetingV1.() -> Unit) {
+    println("step 2")
+	val meeting = MeetingV1()
+    meeting.block() // 여기서 println("meetingV2")가 실행되는데 Meeting(리시버)이라는 객체에 바인딩된다
+    println(meeting)
+}
+
+class MeetingV1
+
+infix fun String.meetingV3(block: MeetingV2.() -> Unit) {
+    println("step 3")
+    val meeting = MeetingV2(this) // this는 String(receiver)을 뜻한다
+    meeting.block()
+    println(meeting)
+}
+
+class MeetingV2(val title: String) {
+    
+    var startTime: String = ""
+    var endTime: String = ""
+    
+    // at과 by가 뭘 의미하는지 모르겠다, 괄호도 왜 있는걸까
+    fun at (time: Double) { startTime = convertToString(time) } 
+    fun by (time: Double) { endTime = convertToString(time) }
+    
+    private fun convertToString(time: Double) = String.format("%.02f", time)
+    
+    override fun toString() = "$title meeting starts $startTime end $endTime"
+}
+
+infix fun String.meetingV4(block: MeetingV3.() -> Unit) {
+    println("step 4")
+    val meeting = MeetingV3(this) // this는 String(receiver)을 뜻한다
+    meeting.block()
+    println(meeting)
+}
+
+class MeetingV3(val title: String) {
+    
+    var startTime: String = ""
+    var endTime: String = ""
+    
+    // start가 by를, end가 at을 부를 수 있음
+    val start = this
+    val end = this
+    
+    infix fun at (time: Double) { startTime = convertToString(time) } 
+    infix fun by (time: Double) { endTime = convertToString(time) }
+    
+    private fun convertToString(time: Double) = String.format("%.02f", time)
+    
+    override fun toString() = "$title meeting starts $startTime end $endTime"
+}
+
+open class MeetingTime(var time: String = "") {
+    protected fun convertToString(time: Double) = String.format("%.02f", time)
+}
+
+class StartTime : MeetingTime() {
+    infix fun at (theTime: Double) { time = convertToString(theTime) } 
+}
+
+class EndTime : MeetingTime() {
+    infix fun by (theTime: Double) { time = convertToString(theTime) } 
+}
+
+class MeetingV4(val title: String) {
+    val start = StartTime()
+    val end = EndTime()
+
+    override fun toString() = "$title meeting starts ${start.time} end ${end.time}"
+}
+
+    
+infix fun String.meetingV5(block: MeetingV4.() -> Unit) {
+    println("step 5")
+    val meeting = MeetingV4(this) // this는 String(receiver)을 뜻한다
+    meeting.block()
+    println(meeting)
+}
+```
