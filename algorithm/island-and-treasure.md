@@ -1,5 +1,7 @@
 # Island and Treasure
 https://neetcode.io/problems/islands-and-treasure
+
+## SOLUTION 01: DFS
 - TC: O(m * n * 4^(m * n))
 - SC: O(m * n)
 
@@ -56,3 +58,58 @@ private int dfs(int[][] grid, int y, int x) {
     - 이 방법은 시간복잡도가 정말 크다
 - 그래프에서는 방문 여부가 중요하다
     - 방문을 이미 했으면 방문하지 않도록 처리해야 한다
+
+## SOLUTIOIN 02: BFS
+- TC: O((m*n)^2)
+- SP: O(m*n)
+```java
+
+/**
+    BFS로 모든 노드를 한번씩 방문
+*/
+int INF = Integer.MAX_VALUE;
+int[] dr = new int[] {0, 0, 1, -1};
+int[] dc = new int[] {1, -1, 0, 0};
+
+public void islandsAndTreasure(int[][] grid) {
+    for (int r = 0; r < grid.length; r++) {
+        for (int c = 0; c < grid[0].length; c++) {
+            if (grid[r][c] == INF) {
+                grid[r][c] = bfs(grid, r, c);
+            }
+        }
+    }
+}
+
+private int bfs(int[][] grid, int r, int c) {
+    boolean[][] visited = new boolean[grid.length][grid[0].length];
+    Queue<int[]> q = new LinkedList();
+    q.offer(new int[] {r, c});
+    visited[r][c] = true;
+    
+    int steps = 0;
+    while (!q.isEmpty()) {
+        int size = q.size();
+        for (int i = 0; i < size; i++) {
+            int[] curr = q.poll();
+            int row = curr[0], col = curr[1];
+            if (grid[row][col] == 0) return steps;
+
+            for (int x = 0; x < 4; x++) {
+                int nr = row + dr[x];
+                int nc = col + dc[x];
+
+                if (nr < 0 || nc < 0 || nr >= grid.length || nc >= grid[0].length || grid[nr][nc] == -1 || visited[nr][nc]) continue;
+
+                q.offer(new int[] {nr, nc});
+                visited[nr][nc] = true;
+            }
+        }
+        steps++;
+    }
+    return INF;
+}
+```
+- DFS랑 마찬가지로 각 노드마다 결과를 담는다
+    - 최악의 경우 그리드의 모든 칸을 탐색해야된다
+    - 그래서 시간복잡도가 2중 for문 `(m*n)`을 돌고 bfs에 모든 그리드를 방문 `(m*n)`한다
