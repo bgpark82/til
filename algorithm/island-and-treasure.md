@@ -113,3 +113,47 @@ private int bfs(int[][] grid, int r, int c) {
 - DFS랑 마찬가지로 각 노드마다 결과를 담는다
     - 최악의 경우 그리드의 모든 칸을 탐색해야된다
     - 그래서 시간복잡도가 2중 for문 `(m*n)`을 돌고 bfs에 모든 그리드를 방문 `(m*n)`한다
+
+
+## SOLUTION 03: Multi Source BFS
+- TC: O(m*n) (최악의 경우 grid를 모두 방문)
+- SC: O(m*n) (최악의 경우 grid에 모든 노드가 담김)
+```java
+int INF = Integer.MAX_VALUE;
+public void islandsAndTreasure(int[][] grid) {
+    Queue<int[]> q = new LinkedList();
+    int m = grid.length;
+    int n = grid[0].length;
+    for (int r = 0; r < m; r++) {
+        for (int c = 0; c < n; c++) {
+            if (grid[r][c] == 0) {
+                q.add(new int[] {r, c});
+            }
+        }
+    }
+
+    if (q.isEmpty()) return;
+
+    int[] dr = new int[] {0, 0, 1, -1};
+    int[] dc = new int[] {1, -1, 0, 0};
+    while(!q.isEmpty()) {
+        int[] cur = q.poll();
+        int row = cur[0];
+        int col = cur[1];
+
+        for (int i = 0; i < 4; i++) {
+            int r = row + dr[i];
+            int c = col + dc[i];
+
+            if (r < 0 || c < 0 || r >= m || c >= n || grid[r][c] != INF) continue;
+
+            q.offer(new int[] {r, c});
+            // INF였던 값을 모두 현재 상태에서 +1로 바꾼다
+            // 위의 grid[r][c] != INF 조건에 의해 재방문도 불가능
+            // 내가 고민했었던, 만약 0부터 dfs로 탐색했을 때 다른 0로 가지간다면 0근처 값을 크게 될 것이다
+            // 하지만 bfs는 0이였던 노드들을 FIFO로 번갈아 가면서 방문하기 때문에, 중복될 이유가 없다
+            grid[r][c] = grid[row][col] + 1; 
+        }
+    }
+}
+```
