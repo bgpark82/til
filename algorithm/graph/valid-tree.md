@@ -2,6 +2,8 @@
 
 https://neetcode.io/problems/valid-tree
 
+
+## 1. DFS
 - TC: O(E + V)
 - SC: O(E + V)
 
@@ -61,3 +63,102 @@ https://neetcode.io/problems/valid-tree
     - 이전 노드가 현재 노드들에 자식에 포함되어 있다면, 이전 노드는 이미 방문한 노드이므로 무시한다 (방문하지 않는다)
     - 현재 노드의 부모 == 현재 노드의 자식 : 왔던데 되돌아간 격
 - 이미 방문한 노드가 실제 노드 개수와 같아야 유효하다
+
+## BFS
+- TC : O(V + E)
+- SC : O(V + E)
+```java
+public boolean validTree(int n, int[][] edges) {
+
+        Set<Integer> visited = new HashSet();
+        List<List<Integer>> adj = new ArrayList();
+
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList());
+        }
+        for (int[] nei : edges) {
+            adj.get(nei[0]).add(nei[1]);
+            adj.get(nei[1]).add(nei[0]);
+        }
+
+        Queue<int[]> q = new LinkedList();
+        q.offer(new int[] {0, -1});
+        while (!q.isEmpty()) {
+            int[] node = q.poll();
+            int curr = node[0], parent = node[1];
+
+            if (visited.contains(curr)) {
+                System.out.println("cycle detected!");
+                return false;
+            }
+
+            visited.add(curr);
+            for (int nei : adj.get(curr)) {
+                // 방금 전 방문한 노드는 다시 방문할 필요가 없다
+                if (nei == parent) continue;
+                
+                q.offer(new int[] {nei, curr});
+            }
+        }
+
+        return visited.size() == n;
+    }
+```
+- DFS와 동일하다
+    - 결국 이전에 방문한 노드라면 스킵
+    - 이미 방문했다면 false를 반환한다
+
+## 3. Disjoint Set Union
+```java
+public boolean validTree(int n, int[][] edges) {
+        DSU dsu = new DSU(n);
+        for (int[] edge: edges) {
+            if (!dsu.union(edge[0], edge[1])) { // 이미 같은 그룹내에 있다면 트리가 아님. 사이클 발생
+                return false;
+            }
+        }
+        // 모두 합쳐진 경우, 모든 노드가 연결된 상태, 1 이상이면 노드 그룹 말고 연결안된 노드가 있다는 뜻
+        return dsu.components() == 1; 
+    }
+
+    class DSU {
+        int[] Parent, Size;
+        int comps;
+
+        public DSU (int n) {
+            comps = n;
+            Parent = new int[n + 1];
+            Size = new int[n + 1];
+            for (int i = 0; i <= n; i++) {
+                Parent[i] = i; // 스스로가 그룹의 리더
+                Size[i] = 1; // 현재 그룹은 1명
+            }
+        }
+
+        public int find(int node) {
+            if (Parent[node] != node) { // 현재 주어진 친구가 그룹의 리더가 아니면
+                Parent[node] = find(Parent[node]); // 리더를 찾아서 저장
+            }
+            return Parent[node]; // 리더를 반환?
+        }
+
+        public boolean union(int u, int v) {
+            int pu = find(u), pv = find(v); // 각각의 리더를 조회한다
+            if (pu == pv) return false; // 리더가 같으면 합칠 필요없다. 이미 같은 그룹
+            // 합쳐야 되는 경우
+            if (Size[pu] < Size[pv]) { // 사이즈가 더 큰값과 
+                int temp = pu;
+                pu = pv;
+                pv = temp;
+            }
+            comps--;
+            Size[pu] += Size[pv]; // 사이즈가 같은것에 큰것을 병합. 왜?
+            Parent[pv] = pu; // 하나의 부모로 병합
+            return true; // 합치면 true
+        }
+
+        public int components() {
+            return comps;
+        }
+    }
+```
