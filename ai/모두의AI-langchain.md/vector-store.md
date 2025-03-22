@@ -8,6 +8,3 @@
 2. Vector library
     - **벡터 유사도 측정**에 특화된 라이브러리, 저장도 가능 (빈약, 유지보수 어려움)
     - FAISS, Annoy, HNSW
-
-
-
