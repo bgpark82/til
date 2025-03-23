@@ -14,4 +14,5 @@ jobs:
         env:
           TZ: 'Europe/Berlin'
         run:
-          CHANGES=$(git diff --since=yesterday --name-only
+          CHANGES=$(git diff --since=yesterday --name-only)
+          echo $CHANGES
