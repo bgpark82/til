@@ -76,13 +76,18 @@ jobs:
                 FIRST_LINE=$(head -n 1 "$file")
                 echo "$FIRST_LINE" | sed 's/^#\s*/\*/' | sed 's/$/\*/' >> $GITHUB_ENV
                 
-                # 파일 경로 출력
-                CLEAN_PATH=$(echo "$file" | sed 's|^\./||')
-                echo "_${CLEAN_PATH}_" >> $GITHUB_ENV
+                # GitHub 링크 생성
+                REPO_URL="https://github.com/${{ github.repository }}"
+                BRANCH=$(git rev-parse --abbrev-ref HEAD)
+                GITHUB_LINK="${REPO_URL}/blob/${BRANCH}/${file}"
+                echo "[파일 보기](${GITHUB_LINK})" >> $GITHUB_ENV
                 
                 # ChatGPT API를 사용하여 내용 요약
                 CONTENT=$(cat "$file")
-                SUMMARY=$(curl -s https://api.openai.com/v1/chat/completions \
+                FIRST_LINE=$(echo "$CONTENT" | head -n 1)
+                echo "파일 첫줄: $FIRST_LINE"
+                
+                RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
                   -H "Content-Type: application/json" \
                   -H "Authorization: Bearer ${{ secrets.OPENAI_API_KEY }}" \
                   -d "{
@@ -91,8 +96,11 @@ jobs:
                       {\"role\": \"system\", \"content\": \"한국어로 텍스트를 간단히 요약해주세요.\"},
                       {\"role\": \"user\", \"content\": \"$CONTENT\"}
                     ]
-                  }" | jq -r '.choices[0].message.content')
+                  }")
                 
+                echo "OpenAI API 응답: $RESPONSE"
+                
+                SUMMARY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
                 echo "> $SUMMARY" >> $GITHUB_ENV
                 echo "" >> $GITHUB_ENV
               fi
