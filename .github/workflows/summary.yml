@@ -112,8 +112,9 @@ jobs:
             echo "EOF" >> $GITHUB_ENV
             
             # SUMMARY 환경변수 내용 출력
-            echo "생성된 요약문:"
+            
             SUMMARY=$(cat $GITHUB_ENV | grep -v "SUMMARY<<EOF" | grep -v "EOF" | jq -R -s '.')
+            echo "생성된 요약문: $SUMMARY"
             echo "SUMMARY=$SUMMARY" >> $GITHUB_ENV
           else
             # 변경된 파일이 없는 경우
@@ -128,15 +129,7 @@ jobs:
           channel-id: '' # 채널 ID를 입력하세요 (선택사항)
           payload: |
             {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ${{ env.SUMMARY }}
-                  }
-                }
-              ]
+              "text": ${{ env.SUMMARY }}
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
