@@ -14,5 +14,32 @@ jobs:
         env:
           TZ: 'Europe/Berlin'
         run:
-          CHANGES=$(git diff --since=yesterday --name-only)
-          echo $CHANGES
+# ======================= DATE =======================
+          # date: 날짜 관련 명령어
+          # -d "yesterday": 어제 날짜를 지정하는 옵션
+          # +%Y: 4자리 연도
+          # +%m: 2자리 월
+          # +%d: 2자리 일
+          # +%Y-%m-%d: YYYY-MM-DD 형식으로 출력
+          TODAY=$(date -d "yesterday" +%Y-%m-%d)
+          echo "어제 날짜 $TODAY" # 어제 날짜: 2024-01-16
+          
+          # ======================= CHANGES =======================
+          # 당일 수정된 md 파일 찾기 (.github 폴더 제외)
+          # 오늘 하루동안 수정된 .md 파일들을 찾습니다
+          # 결과: 
+          # - .github 폴더를 제외한 모든 .md 파일 중
+          # - 오늘 00:00 ~ 23:59 사이에 수정된 파일들의 경로가 출력됩니다
+          # - 예: ./ai/langchain.md
+          #      ./python/decorator.md 
+          
+          # git diff: 변경된 파일 확인
+          # --name-only: 파일 이름만 출력
+          # --diff-filter=M: Modified(수정된) 파일만 필터링
+          # --since="${TODAY} 00:00": 오늘 00:00부터
+          # --until="${TODAY} 23:59": 오늘 23:59까지
+          # -- "*.md": .md 파일만 검색
+          # | grep -v "^.github/": .github 디렉토리 제외
+          CHANGES=$(git diff --name-only --diff-filter=M --since="${TODAY} 00:00" --until="${TODAY} 23:59" -- "*.md" | grep -v "^.github/")
+          echo "변경된 파일 목록: $CHANGES"
+          # "예시 결과: ./ai/langchain.md"
