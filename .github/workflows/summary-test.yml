@@ -1,6 +1,9 @@
 name: summary test
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
@@ -43,7 +46,7 @@ jobs:
           # --until="${TODAY} 23:59": 오늘 23:59까지
           # -- "*.md": .md 파일만 검색
           # | grep -v "^.github/": .github 디렉토리 제외
-          CHANGES=$(git log --name-only --format="%ad" --date=short | grep '\.md' | grep -v '^\.github/' | sort -u)
+          CHANGES=$(git log --name-only --format=%ad --date=short | grep '\.md' | grep -v '^\.github/' | sort -u)
           # CHANGES=$(git log --since="2025-03-20 00:00:00" --until="2025-03-23 00:00:00" --name-only --format="" | grep '\.md$' | grep -v '^\.github/' | sort -u)
           echo "변경된 파일 목록: $CHANGES"
           # "예시 결과: ./ai/langchain.md"
