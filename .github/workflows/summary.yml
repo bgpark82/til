@@ -69,7 +69,9 @@ jobs:
               if [ -f "$file" ]; then
                 echo "---" >> $GITHUB_ENV
                 # 파일의 첫 줄(제목) 추출하여 '#' 제거 후 '*'로 감싸서 출력
-                head -n 1 "$file" | sed 's/^#\s*/\*/' | sed 's/$/\*/' >> $GITHUB_ENV
+                FIRST_LINE=$(head -n 1 "$file")
+                echo "첫 번째 줄: $FIRST_LINE"
+                echo "$FIRST_LINE" | sed 's/^#\s*/\*/' | sed 's/$/\*/' >> $GITHUB_ENV
                 
                 # 파일 경로에서 ./ 제거하고 이탤릭체로 출력
                 CLEAN_PATH=$(echo "$file" | sed 's|^\./||')
@@ -82,9 +84,14 @@ jobs:
             done <<< "$CHANGES"
             # 멀티라인 환경변수 종료
             echo "EOF" >> $GITHUB_ENV
+            
+            # SUMMARY 환경변수 내용 출력
+            echo "생성된 요약문:"
+            cat $GITHUB_ENV | grep -v "SUMMARY<<EOF" | grep -v "EOF"
           else
             # 변경된 파일이 없는 경우
             echo "SUMMARY=오늘은 새로운 TIL이 없습니다. 😅" >> $GITHUB_ENV
+            echo "생성된 요약문: 오늘은 새로운 TIL이 없습니다. 😅"
           fi
 
       # Slack으로 요약 전송
