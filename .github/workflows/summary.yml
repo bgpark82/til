@@ -59,29 +59,45 @@ jobs:
           if [ -n "$CHANGES" ]; then
             # 멀티라인 환경변수 시작
             echo "SUMMARY<<EOF" >> $GITHUB_ENV
-            # 메시지 헤더 추가
             echo "📚 오늘의 TIL 요약 (${YESTERDAY})" >> $GITHUB_ENV
-            
             echo "" >> $GITHUB_ENV
-            
+
+            # OpenAI API 키 확인
+            if [ -z "$OPENAI_API_KEY" ]; then
+              echo "Error: OPENAI_API_KEY is not set"
+              exit 1
+            fi
+
             # 각 변경된 파일에 대해
             while IFS= read -r file; do
               if [ -f "$file" ]; then
                 echo "---" >> $GITHUB_ENV
-                # 파일의 첫 줄(제목) 추출하여 '#' 제거 후 '*'로 감싸서 출력
+                # 파일의 첫 줄(제목) 추출
                 FIRST_LINE=$(head -n 1 "$file")
-                echo "첫 번째 줄: $FIRST_LINE"
                 echo "$FIRST_LINE" | sed 's/^#\s*/\*/' | sed 's/$/\*/' >> $GITHUB_ENV
                 
-                # 파일 경로에서 ./ 제거하고 이탤릭체로 출력
+                # 파일 경로 출력
                 CLEAN_PATH=$(echo "$file" | sed 's|^\./||')
                 echo "_${CLEAN_PATH}_" >> $GITHUB_ENV
                 
-                # 파일 내용 전체를 가져와서 첫 줄(제목)을 제외하고 출력
-                echo "> $(tail -n +2 "$file")" | sed 's/^/> /' >> $GITHUB_ENV
+                # ChatGPT API를 사용하여 내용 요약
+                CONTENT=$(cat "$file")
+                SUMMARY=$(curl -s https://api.openai.com/v1/chat/completions \
+                  -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer $OPENAI_API_KEY" \
+                  -d "{
+                    \"model\": \"gpt-3.5-turbo\",
+                    \"messages\": [
+                      {\"role\": \"system\", \"content\": \"한국어로 텍스트를 간단히 요약해주세요.\"},
+                      {\"role\": \"user\", \"content\": \"$CONTENT\"}
+                    ]
+                  }" | jq -r '.choices[0].message.content')
+                
+                echo "> $SUMMARY" >> $GITHUB_ENV
                 echo "" >> $GITHUB_ENV
               fi
             done <<< "$CHANGES"
+            
             # 멀티라인 환경변수 종료
             echo "EOF" >> $GITHUB_ENV
             
