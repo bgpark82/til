@@ -1,0 +1,17 @@
+name: summary test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    run-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: get changed file since yesterday
+        id: changed-files
+        env:
+          TZ: 'Europe/Berlin'
+        run:
+          CHANGES=$(git diff --since=yesterday --name-only
