@@ -13,8 +13,8 @@ jobs:
         id: changed-files
         env:
           TZ: 'Europe/Berlin'
-        run:
-# ======================= DATE =======================
+        run: |
+          # ======================= DATE =======================
           # date: 날짜 관련 명령어
           # -d "yesterday": 어제 날짜를 지정하는 옵션
           # +%Y: 4자리 연도
@@ -40,6 +40,6 @@ jobs:
           # --until="${TODAY} 23:59": 오늘 23:59까지
           # -- "*.md": .md 파일만 검색
           # | grep -v "^.github/": .github 디렉토리 제외
-          CHANGES=$(git diff --name-only --diff-filter=M --since="${TODAY} 00:00" --until="${TODAY} 23:59" -- "*.md" | grep -v "^.github/")
+          CHANGES=$(git diff --name-only --diff-filter=M --since="$TODAY" --until="$TODAY" -- "*.md" | grep -v "^.github/")
           echo "변경된 파일 목록: $CHANGES"
           # "예시 결과: ./ai/langchain.md"
