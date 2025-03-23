@@ -47,8 +47,8 @@ jobs:
           # -- "*.md": .md 파일만 검색
           # | grep -v "^.github/": .github 디렉토리 제외
           
-          CHANGES=$(git log --since="2025-03-20 00:00:00" --until="2025-03-23 23:59:59" --name-only  | grep '\.md$' | grep -v '^\.github/' | sort -u)
-          echo "변경된 파일 목록: $CHANGES"
+          echo $(git log --oneline)
+          # echo "변경된 파일 목록: $CHANGES"
           # "예시 결과: ./ai/langchain.md"
 
       - name: Set up Python
