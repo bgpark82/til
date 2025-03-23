@@ -102,7 +102,7 @@ jobs:
                 
                 echo "OpenAI API 응답: $RESPONSE"
                 
-                SUMMARY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+                SUMMARY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content' | sed 's/"/\\"/g')
                 echo "> $SUMMARY" >> $GITHUB_ENV
                 echo "" >> $GITHUB_ENV
               fi
@@ -127,7 +127,7 @@ jobs:
           channel-id: '' # 채널 ID를 입력하세요 (선택사항)
           payload: |
             {
-              "text": ${{ toJSON(env.SUMMARY) }}
+              "text": "${{ env.SUMMARY }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
