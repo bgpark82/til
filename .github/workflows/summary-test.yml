@@ -55,4 +55,9 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python .github/scripts/generate_summary.py >> $GITHUB_ENV
+          python .github/scripts/generate_summary.py
+
+
+
+
+
