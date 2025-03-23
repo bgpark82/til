@@ -45,8 +45,7 @@ jobs:
           # | grep '\.md$': .md 파일만 필터링
           # | grep -v '^\.github/': .github 디렉토리 제외
           # | sort -u: 중복 제거하고 정렬 (같은 파일이 여러번 커밋되어도 한번만 출력)
-          CHANGES=$(git log --since="${YESTERDAY}" \
-            --name-only --format="" | grep '\.md$' | grep -v '^\.github/' | sort -u)
+          CHANGES=$(git log --since="${YESTERDAY}" --name-only | grep '\.md$' | grep -v '^\.github/' | sort -u)
           
           echo "변경된 파일 목록: $CHANGES"
           # 예시 결과:
