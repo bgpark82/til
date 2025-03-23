@@ -95,7 +95,7 @@ jobs:
                   -d "{
                     \"model\": \"gpt-3.5-turbo\",
                     \"messages\": [
-                      {\"role\": \"system\", \"content\": \"한국어로 텍스트를 간단히 요약해주세요.\"},
+                      {\"role\": \"system\", \"content\": \"한국어로 텍스트를 간단히 요약해주세요. 응답에서 특수문자는 이스케이프 처리해주세요\"},
                       {\"role\": \"user\", \"content\": ${ESCAPED_CONTENT}}
                     ]
                   }")
@@ -124,22 +124,10 @@ jobs:
       - name: Send summary to Slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          # Slack Block Kit을 사용하여 메시지 포맷팅
-          # blocks 배열을 사용하여 메시지를 구조화
-          # type: "section"은 기본 텍스트 블록을 나타냄
-          # text.type: "mrkdwn"은 Slack의 마크다운 형식 지원
-          # toJSON()을 사용하여 멀티라인 문자열을 올바른 JSON 형식으로 변환
+          channel-id: '' # 채널 ID를 입력하세요 (선택사항)
           payload: |
             {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ${{ env.SUMMARY }}
-                  }
-                }
-              ]
+              "text": "${{ env.SUMMARY }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
