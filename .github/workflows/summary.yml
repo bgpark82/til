@@ -128,7 +128,7 @@ jobs:
           channel-id: '' # 채널 ID를 입력하세요 (선택사항)
           payload: |
             {
-              "text": "${{ env.SUMMARY }}"
+              "text": ${{ env.SUMMARY }}
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
