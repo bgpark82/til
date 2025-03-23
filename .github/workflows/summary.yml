@@ -27,8 +27,8 @@ jobs:
           # date: 날짜 관련 명령어
           # -d "yesterday": 어제 날짜를 지정하는 옵션
           # +%Y-%m-%d: YYYY-MM-DD 형식으로 출력
-          # YESTERDAY=$(date -d "yesterday" +%Y-%m-%d)
-          YESTERDAY=2025-03-20
+          YESTERDAY=$(date -d "yesterday" +%Y-%m-%d)
+          # YESTERDAY=2025-03-20
           echo "어제 날짜: $YESTERDAY" # 어제 날짜: 2024-01-16
           
           # ======================= CHANGES =======================
@@ -47,7 +47,7 @@ jobs:
           # | grep '\.md$': .md 파일만 필터링
           # | grep -v '^\.github/': .github 디렉토리 제외
           # | sort -u: 중복 제거하고 정렬 (같은 파일이 여러번 커밋되어도 한번만 출력)
-          CHANGES=$(git log --since="${YESTERDAY} 00:00:00" --until="2025-03-23 23:59:59" --name-only --format="" | grep '\.md$' | grep -v '^\.github/' | sort -u)
+          CHANGES=$(git log --since="${YESTERDAY} 00:00:00" --until="${YESTERDAY} 23:59:59" --name-only --format="" | grep '\.md$' | grep -v '^\.github/' | sort -u)
           
           echo "변경된 파일 목록: $CHANGES"
           # 예시 결과:
