@@ -122,12 +122,12 @@ jobs:
 
       # Slack으로 요약 전송
       - name: Send summary to Slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: '' # 채널 ID를 입력하세요 (선택사항)
+          payload: |
+            {
+              "text": "${{ env.SUMMARY }}"
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          # curl을 사용하여 Slack webhook으로 메시지 전송
-          curl -X POST -H 'Content-type: application/json' \
-            --data "{
-              \"text\": \"${{ env.SUMMARY }}\"
-            }" \
-            $SLACK_WEBHOOK_URL
