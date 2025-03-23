@@ -14,6 +14,8 @@ jobs:
       # 리포지토리 코드를 가져오기
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # 모든 커밋 히스토리를 가져오기 위해 "반드시" 0으로 설정
 
       # 당일 변경된 파일 확인 및 요약 생성
       - name: Get today's changed files
