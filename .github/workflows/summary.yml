@@ -113,7 +113,8 @@ jobs:
             
             # SUMMARY 환경변수 내용 출력
             echo "생성된 요약문:"
-            cat $GITHUB_ENV | grep -v "SUMMARY<<EOF" | grep -v "EOF"
+            SUMMARY=$(cat $GITHUB_ENV | grep -v "SUMMARY<<EOF" | grep -v "EOF" | jq -R -s '.')
+            echo "SUMMARY=$SUMMARY" >> $GITHUB_ENV
           else
             # 변경된 파일이 없는 경우
             echo "SUMMARY=오늘은 새로운 TIL이 없습니다. 😅" >> $GITHUB_ENV
