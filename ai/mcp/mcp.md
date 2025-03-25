@@ -34,3 +34,9 @@ https://github.com/modelcontextprotocol/python-sdk
 https://modelcontextprotocol.io/tutorials/building-mcp-with-llms
 - mcp doc
 - mcp typescript sdk
+
+## Firecrawl을 이용한 크롤링
+https://youtu.be/ueJvsEgjKHk?si=qpafLr6-IzaFL7WH
+
+## MCP 서버 리스트
+https://github.com/punkpeye/awesome-mcp-servers
