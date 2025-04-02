@@ -58,6 +58,7 @@ https://leetcode.com/problems/number-of-connected-components-in-an-undirected-gr
         int res = n;
         for (int[] edge : edges) {
             // edge 간 비교를 한다. 합칠수 있다면 두 노드간 서로 그룹이 된다
+            // false면 새로운 두 edge는 같은 그룹이 아닌 상태
             if (dsu.union(edge[0], edge[1])) {
                 res--;
             }
