@@ -63,7 +63,7 @@ class DSU {
 
     public int find(int node) {
         if (Parent[node] != node) { // 현재 주어진 친구가 그룹의 리더가 아니면
-            Parent[node] = find(Parent[node]); // 리더를 찾아서 저장
+            Parent[node] = find(Parent[node]); // 리더를 찾아서 저장, 매번 parent를 업데이트하므로 다음에 parent를 방문하면 경로가 업축되어 있다
         }
         return Parent[node]; // 그룹의 최종 리더를 반환
     }
