@@ -118,7 +118,7 @@ jobs:
             echo "SUMMARY=$SUMMARY" >> $GITHUB_ENV
           else
             # 변경된 파일이 없는 경우
-            echo "SUMMARY=/"오늘은 새로운 TIL이 없습니다. 😅/"" >> $GITHUB_ENV
+            echo "SUMMARY=오늘은 새로운 TIL이 없습니다. 😅" >> $GITHUB_ENV
             echo "생성된 요약문: 오늘은 새로운 TIL이 없습니다. 😅"
           fi
 
