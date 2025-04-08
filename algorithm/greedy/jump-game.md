@@ -69,3 +69,23 @@ private boolean dfs(int[] nums, int idx, Map<Integer, Boolean> memo) {
     return false;
 }
 ```
+
+## SOLUTION 04. Greedy
+- TC: O(N)
+- SC: O(1)
+```java
+/**
+    g
+    1 2 0 1 0
+    i 
+*/
+public boolean canJump(int[] nums) {
+    int goal = nums.length - 1;
+    for (int i = nums.length - 2; i >= 0; i--) {
+        if (i + nums[i] >= goal) {
+            goal = i;
+        }
+    }
+    return goal == 0;
+}
+```
