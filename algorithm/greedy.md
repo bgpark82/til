@@ -60,7 +60,7 @@ public boolean canJump(int[] nums) {
     return false;
 }
 ```
-### 로직 설명
+## 로직 설명
 maxReach는 현재까지 도달할 수 있는 최대 인덱스.
 
 현재 인덱스 i가 maxReach를 넘어서면 더 이상 진행 불가 → false.
