@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  ansible-control-node:
+    build: .
+    container_name: ansible-control-node
+    volumes:
+      - .:/ansible
+      - ssh_key:/root/.ssh
+    working_dir: /ansible
+    entrypoint: ["/ansible/control-node-entrypoint.sh"]
+    networks:
+      - ansible_net
+
+  host1:
+    build: .
+    container_name: host1
+    depends_on:
+      - ansible-control-node
+    volumes:
+      - ssh_key:/ssh_key
+    networks:
+      ansible_net:
+        ipv4_address: 192.0.2.50
+
+  host2:
+    build: .
+    container_name: host2
+    depends_on:
+      - ansible-control-node
+    volumes:
+      - ssh_key:/ssh_key
+    networks:
+      ansible_net:
+        ipv4_address: 192.0.2.51
+
+  host3:
+    build: .
+    container_name: host3
+    depends_on:
+      - ansible-control-node
+    volumes:
+      - ssh_key:/ssh_key
+    networks:
+      ansible_net:
+        ipv4_address: 192.0.2.52
+
+volumes:
+  ssh_key:
+
+networks:
+  ansible_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.0.2.0/24
