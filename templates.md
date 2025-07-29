@@ -1,92 +1,27 @@
-# Template
+# 📌 [TOPIC]
 
+## ✅ Summary & Key Learnings
+- A brief, high-level summary of what you learned.
+- Key point 1
+- Key point 2
 
-## 템플릿
-1. 기본 템플릿
+## 🔍 Deep Dive
+- A detailed explanation of the concept.
+- Include code snippets, diagrams, or examples.
 
-```markdown
-# 📌 [주제]
-
-## ✅ 오늘 배운 내용
-- 핵심 요점 1
-- 핵심 요점 2
-
-## 🔍 상세 정리
-- 개념 설명 (필요하면 코드 포함)
-
-## 🤔 회고 & 적용할 것
-- 어디에 적용할 수 있을까?
-- 추가로 공부할 것?
+```python
+# Your code here
 ```
 
-2. 문제 해결
+## (Optional) Problems & Solutions
+- **Problem:** Describe the issue you faced.
+- **Solution:** Explain how you solved it.
 
-```
-# ❌ [에러 메시지 or 문제 상황]
+## 🤔 Review & Next Steps
+- How can I apply this knowledge in my projects?
+- What are the related topics I should explore next?
 
-## ⚠️ 발생한 문제
-- 어떤 상황에서 발생했는지?
-
-## 🔍 원인 분석
-- 원인을 찾기 위해 시도한 것들
-- 로그, 디버깅 과정
-
-## ✅ 해결 방법
-- 해결책 및 적용한 코드
-
-## 🔗 참고 자료
-- 공식 문서, Stack Overflow 링크 등
-```
-
-3. 새로운 개념
-
-```markdown
-# 📌 [개념명]
-
-## 1️⃣ 개념 정의
-- 개념의 정의 및 설명
-
-## 2️⃣ 특징
-- 장점 & 단점
-- 언제 사용하는지?
-
-## 3️⃣ 예제 코드
-// 예제 코드 작성
-```
-
-4. 책/강의
-
-```markdown
-# 📖 [책/강의 제목]
-
-## ✅ 핵심 요약
-- 핵심 개념 1
-- 핵심 개념 2
-
-## 💡 인상 깊은 내용
-- 기억하고 싶은 내용
-
-## 🤔 배운 점 & 적용할 것
-- 실무에서 어떻게 활용할 수 있을까?
-```
-
-5. 프로젝트 진행
-
-```markdown
-# 🚀 [프로젝트명] - [날짜]
-
-## ✅ 오늘 한 작업
-- 작업 1
-- 작업 2
-
-## 🔍 발생한 문제 & 해결 방법
-- 문제 1 → 해결책
-- 문제 2 → 해결책
-
-## 🎯 내일 할 일
-- 작업 A
-- 작업 B
-
-## 🤔 회고
-- 잘한 점, 개선할 점
-```
+## 🔗 References
+- [Official Docs](http://example.com)
+- [Stack Overflow Thread](http://example.com)
+- [Helpful Article](http://example.com)
